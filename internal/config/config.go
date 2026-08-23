@@ -42,6 +42,7 @@ type Config struct {
 	// Restore behaviour
 	ForceRestore   bool
 	RestorePVCMode bool
+	RestoreVerbose bool
 }
 
 // fileConfig is the structure of the optional YAML config file.
@@ -79,6 +80,7 @@ type fileConfig struct {
 		TargetDir    string `yaml:"target_dir"`
 		ForceRestore *bool  `yaml:"force_restore"`
 		PVCMode      *bool  `yaml:"pvc_mode"`
+		Verbose      *bool  `yaml:"verbose"`
 	} `yaml:"restore"`
 }
 
@@ -149,6 +151,7 @@ func applyFile(cfg *Config, path string) error {
 	setStr(&cfg.TargetDir, fc.Restore.TargetDir)
 	setBool(&cfg.ForceRestore, fc.Restore.ForceRestore)
 	setBool(&cfg.RestorePVCMode, fc.Restore.PVCMode)
+	setBool(&cfg.RestoreVerbose, fc.Restore.Verbose)
 
 	setInt(&cfg.RetentionKeepLatest, fc.Backup.Retention.KeepLatest)
 	setInt(&cfg.RetentionKeepDaily, fc.Backup.Retention.KeepDaily)
@@ -184,6 +187,7 @@ func applyEnv(cfg *Config) error {
 	setEnvStr(&cfg.TargetDir, "PDBACKUP_TARGET_DIR")
 	setEnvBool(&cfg.ForceRestore, "PDBACKUP_FORCE_RESTORE")
 	setEnvBool(&cfg.RestorePVCMode, "PDBACKUP_RESTORE_PVC_MODE")
+	setEnvBool(&cfg.RestoreVerbose, "PDBACKUP_RESTORE_VERBOSE")
 
 	setEnvInt(&cfg.RetentionKeepLatest, "PDBACKUP_RETENTION_KEEP_LATEST")
 	setEnvInt(&cfg.RetentionKeepDaily, "PDBACKUP_RETENTION_KEEP_DAILY")

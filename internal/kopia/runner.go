@@ -290,7 +290,11 @@ func (r *Runner) Restore() error {
 		"target", r.cfg.TargetDir,
 	)
 
-	if err := r.run([]string{"restore", latest.ID, r.cfg.TargetDir}); err != nil {
+	restoreArgs := []string{"restore", latest.ID, r.cfg.TargetDir}
+	if r.cfg.RestoreVerbose {
+		restoreArgs = append(restoreArgs, "--log-level=debug")
+	}
+	if err := r.run(restoreArgs); err != nil {
 		err = fmt.Errorf("restore snapshot %s: %w", latest.ID, err)
 		r.events.RestoreFailed(r.cfg.TargetDir, err)
 		return err

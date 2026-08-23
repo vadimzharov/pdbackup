@@ -74,6 +74,7 @@ restore:
   target_dir: /data                  # where to restore files
   force_restore: false               # true = exit 1 if restore is not possible
   pvc_mode: false                    # true = skip restore if marker file exists
+  verbose: false                     # true = log each restored file (noisy: also enables kopia debug logging)
 ```
 
 A missing config file is silently ignored — you can configure everything with environment variables instead.
@@ -104,6 +105,7 @@ Every YAML key has a corresponding environment variable. When both are set the e
 | `PDBACKUP_TARGET_DIR` | `restore.target_dir` | **required for restore** |
 | `PDBACKUP_FORCE_RESTORE` | `restore.force_restore` | `false` |
 | `PDBACKUP_RESTORE_PVC_MODE` | `restore.pvc_mode` | `false` |
+| `PDBACKUP_RESTORE_VERBOSE` | `restore.verbose` | `false` |
 | `PDBACKUP_DEBUG` | — | `false` |
 
 > **Note on `PDBACKUP_HOSTNAME` / `kopia.hostname`**
