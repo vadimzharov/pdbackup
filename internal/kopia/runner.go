@@ -48,16 +48,21 @@ func New(cfg *config.Config) *Runner {
 }
 
 // baseArgs returns flags that apply to every kopia invocation.
-func (r *Runner) baseArgs() []string {
+func (r *Runner) baseArgs(logLevel string) []string {
 	return []string{
 		"--config-file=" + configFile,
-		"--log-level=info",
+		"--log-level=" + logLevel,
 		"--log-dir=" + logDir,
 	}
 }
 
 func (r *Runner) run(args []string) error {
-	allArgs := append(r.baseArgs(), args...)
+	return r.runLevel(args, "info")
+}
+
+// runLevel is like run but overrides the console log level for this call.
+func (r *Runner) runLevel(args []string, logLevel string) error {
+	allArgs := append(r.baseArgs(logLevel), args...)
 	slog.Info("kopia", "cmd", strings.Join(args, " "))
 	cmd := exec.Command("kopia", allArgs...)
 	cmd.Stdout = os.Stdout
@@ -67,7 +72,7 @@ func (r *Runner) run(args []string) error {
 
 // runCapture runs kopia and captures all output (used when we expect failure).
 func (r *Runner) runCapture(args []string) ([]byte, error) {
-	allArgs := append(r.baseArgs(), args...)
+	allArgs := append(r.baseArgs("info"), args...)
 	var buf bytes.Buffer
 	cmd := exec.Command("kopia", allArgs...)
 	cmd.Stdout = &buf
@@ -78,7 +83,7 @@ func (r *Runner) runCapture(args []string) ([]byte, error) {
 
 // runJSON runs kopia and captures only stdout for JSON parsing.
 func (r *Runner) runJSON(args []string) ([]byte, error) {
-	allArgs := append(r.baseArgs(), args...)
+	allArgs := append(r.baseArgs("info"), args...)
 	var stdout bytes.Buffer
 	cmd := exec.Command("kopia", allArgs...)
 	cmd.Stdout = &stdout
@@ -290,11 +295,11 @@ func (r *Runner) Restore() error {
 		"target", r.cfg.TargetDir,
 	)
 
-	restoreArgs := []string{"restore", latest.ID, r.cfg.TargetDir}
+	restoreLogLevel := "info"
 	if r.cfg.RestoreVerbose {
-		restoreArgs = append(restoreArgs, "--log-level=debug")
+		restoreLogLevel = "debug"
 	}
-	if err := r.run(restoreArgs); err != nil {
+	if err := r.runLevel([]string{"restore", latest.ID, r.cfg.TargetDir}, restoreLogLevel); err != nil {
 		err = fmt.Errorf("restore snapshot %s: %w", latest.ID, err)
 		r.events.RestoreFailed(r.cfg.TargetDir, err)
 		return err
