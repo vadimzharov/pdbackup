@@ -117,10 +117,7 @@ func defaults() *Config {
 		KopiaHostname:        "pdbackup",
 		KopiaUsername:        "pdbackup",
 		BackupInterval:       time.Hour,
-		RetentionKeepLatest:  10,
-		RetentionKeepDaily:   7,
-		RetentionKeepWeekly:  4,
-		RetentionKeepMonthly: 3,
+		RetentionKeepLatest: 10,
 	}
 }
 

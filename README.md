@@ -65,11 +65,11 @@ backup:
   source_dir: /data                  # directory to back up
   interval: 1h                       # daemon tick (any Go duration: 30m, 6h …)
   retention:
-    keep_latest: 10
+    keep_latest: 10                  # default policy: keep only the last 10 snapshots
     keep_hourly: 0                    # 0 = don't additionally keep any hourly snapshots
-    keep_daily: 7
-    keep_weekly: 4
-    keep_monthly: 3
+    keep_daily: 0                     # 0 = don't additionally keep any daily snapshots
+    keep_weekly: 0                    # 0 = don't additionally keep any weekly snapshots
+    keep_monthly: 0                   # 0 = don't additionally keep any monthly snapshots
     keep_annual: 0                    # 0 = don't additionally keep any annual snapshots
 
 restore:
@@ -102,9 +102,9 @@ Every YAML key has a corresponding environment variable. When both are set the e
 | `PDBACKUP_BACKUP_INTERVAL` | `backup.interval` | `1h` |
 | `PDBACKUP_RETENTION_KEEP_LATEST` | `backup.retention.keep_latest` | `10` |
 | `PDBACKUP_RETENTION_KEEP_HOURLY` | `backup.retention.keep_hourly` | `0` |
-| `PDBACKUP_RETENTION_KEEP_DAILY` | `backup.retention.keep_daily` | `7` |
-| `PDBACKUP_RETENTION_KEEP_WEEKLY` | `backup.retention.keep_weekly` | `4` |
-| `PDBACKUP_RETENTION_KEEP_MONTHLY` | `backup.retention.keep_monthly` | `3` |
+| `PDBACKUP_RETENTION_KEEP_DAILY` | `backup.retention.keep_daily` | `0` |
+| `PDBACKUP_RETENTION_KEEP_WEEKLY` | `backup.retention.keep_weekly` | `0` |
+| `PDBACKUP_RETENTION_KEEP_MONTHLY` | `backup.retention.keep_monthly` | `0` |
 | `PDBACKUP_RETENTION_KEEP_ANNUAL` | `backup.retention.keep_annual` | `0` |
 | `PDBACKUP_TARGET_DIR` | `restore.target_dir` | **required for restore** |
 | `PDBACKUP_FORCE_RESTORE` | `restore.force_restore` | `false` |
@@ -117,7 +117,7 @@ Every YAML key has a corresponding environment variable. When both are set the e
 > Set this to something stable and unique per application (e.g. the Deployment name).
 
 > **Note on retention**
-> A snapshot is kept if it matches *any* configured category (latest / hourly / daily / weekly / monthly / annual) — the categories are additive, not exclusive. `0` means "keep none for this category," not "unlimited." To keep only the N most recent snapshots and nothing else, set `keep_latest: N` and leave every other category at `0` (the default for `keep_hourly`/`keep_annual`; set `keep_daily`/`keep_weekly`/`keep_monthly` to `0` too).
+> A snapshot is kept if it matches *any* configured category (latest / hourly / daily / weekly / monthly / annual) — the categories are additive, not exclusive. `0` means "keep none for this category," not "unlimited." By default only `keep_latest` is non-zero, so out of the box pdbackup keeps just the last 10 snapshots and nothing else. Set `keep_daily`/`keep_weekly`/`keep_monthly`/`keep_hourly`/`keep_annual` to non-zero values if you also want calendar-bucketed retention on top of that.
 
 ## Kubernetes deployment
 
