@@ -35,9 +35,11 @@ type Config struct {
 
 	// Retention policy
 	RetentionKeepLatest  int
+	RetentionKeepHourly  int
 	RetentionKeepDaily   int
 	RetentionKeepWeekly  int
 	RetentionKeepMonthly int
+	RetentionKeepAnnual  int
 
 	// Restore behaviour
 	ForceRestore   bool
@@ -70,9 +72,11 @@ type fileConfig struct {
 		Interval  string `yaml:"interval"`
 		Retention struct {
 			KeepLatest  *int `yaml:"keep_latest"`
+			KeepHourly  *int `yaml:"keep_hourly"`
 			KeepDaily   *int `yaml:"keep_daily"`
 			KeepWeekly  *int `yaml:"keep_weekly"`
 			KeepMonthly *int `yaml:"keep_monthly"`
+			KeepAnnual  *int `yaml:"keep_annual"`
 		} `yaml:"retention"`
 	} `yaml:"backup"`
 
@@ -154,9 +158,11 @@ func applyFile(cfg *Config, path string) error {
 	setBool(&cfg.RestoreVerbose, fc.Restore.Verbose)
 
 	setInt(&cfg.RetentionKeepLatest, fc.Backup.Retention.KeepLatest)
+	setInt(&cfg.RetentionKeepHourly, fc.Backup.Retention.KeepHourly)
 	setInt(&cfg.RetentionKeepDaily, fc.Backup.Retention.KeepDaily)
 	setInt(&cfg.RetentionKeepWeekly, fc.Backup.Retention.KeepWeekly)
 	setInt(&cfg.RetentionKeepMonthly, fc.Backup.Retention.KeepMonthly)
+	setInt(&cfg.RetentionKeepAnnual, fc.Backup.Retention.KeepAnnual)
 
 	if fc.Backup.Interval != "" {
 		d, err := time.ParseDuration(fc.Backup.Interval)
@@ -190,9 +196,11 @@ func applyEnv(cfg *Config) error {
 	setEnvBool(&cfg.RestoreVerbose, "PDBACKUP_RESTORE_VERBOSE")
 
 	setEnvInt(&cfg.RetentionKeepLatest, "PDBACKUP_RETENTION_KEEP_LATEST")
+	setEnvInt(&cfg.RetentionKeepHourly, "PDBACKUP_RETENTION_KEEP_HOURLY")
 	setEnvInt(&cfg.RetentionKeepDaily, "PDBACKUP_RETENTION_KEEP_DAILY")
 	setEnvInt(&cfg.RetentionKeepWeekly, "PDBACKUP_RETENTION_KEEP_WEEKLY")
 	setEnvInt(&cfg.RetentionKeepMonthly, "PDBACKUP_RETENTION_KEEP_MONTHLY")
+	setEnvInt(&cfg.RetentionKeepAnnual, "PDBACKUP_RETENTION_KEEP_ANNUAL")
 
 	if v := os.Getenv("PDBACKUP_BACKUP_INTERVAL"); v != "" {
 		d, err := time.ParseDuration(v)

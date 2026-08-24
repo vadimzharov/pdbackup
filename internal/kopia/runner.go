@@ -194,9 +194,11 @@ func (r *Runner) setPolicy() error {
 	return r.run([]string{
 		"policy", "set", "--global",
 		fmt.Sprintf("--keep-latest=%d", r.cfg.RetentionKeepLatest),
+		fmt.Sprintf("--keep-hourly=%d", r.cfg.RetentionKeepHourly),
 		fmt.Sprintf("--keep-daily=%d", r.cfg.RetentionKeepDaily),
 		fmt.Sprintf("--keep-weekly=%d", r.cfg.RetentionKeepWeekly),
 		fmt.Sprintf("--keep-monthly=%d", r.cfg.RetentionKeepMonthly),
+		fmt.Sprintf("--keep-annual=%d", r.cfg.RetentionKeepAnnual),
 	})
 }
 
